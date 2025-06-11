@@ -9,7 +9,7 @@
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'myfinance');
 define('DB_USER', 'root');
-define('DB_PASS', ''); // XAMPP default password is empty
+define('DB_PASS', 'password'); // XAMPP default password is empty
 define('DB_PORT', 3306);
 define('DB_CHARSET', 'utf8mb4');
 
