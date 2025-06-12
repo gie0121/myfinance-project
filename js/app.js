@@ -7,14 +7,6 @@
 // AUTHENTICATION MODULE
 // ================================
 
-/**
- * Save user to localStorage
- */
-function saveUser(username, email, password) {
-  let users = JSON.parse(localStorage.getItem("users") || "{}");
-  users[username] = { email, password };
-  localStorage.setItem("users", JSON.stringify(users));
-}
 
 /**
  * Validate user credentials
@@ -39,19 +31,6 @@ function logoutUser() {
 function initAuth() {
   const regForm = document.getElementById("registerForm");
   const loginForm = document.getElementById("loginForm");
-
-  // Register form handler
-  if (regForm) {
-    regForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const username = document.getElementById("regUsername").value;
-      const email = document.getElementById("regEmail").value;
-      const password = document.getElementById("regPassword").value;
-      saveUser(username, email, password);
-      alert("Registered successfully! Please log in.");
-      window.location.href = "login.html";
-    });
-  }
 
   // Login form handler
   if (loginForm) {
