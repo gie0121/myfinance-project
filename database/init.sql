@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS transactions (
 );
 
 -- 測試帳號與密碼 (密碼為 123456)
-INSERT INTO users (username, email, password) VALUES 
+INSERT INTO users ('username', 'email', 'password') VALUES 
 ('Demo User', 'test@example.com', '$2y$10$abcdefgHijkLmnopqrstuvOPQRSTUvwxyzabcdEFGHijklmNOpqr'); 
 
 -- 測試分類（需搭配正確 user_id）
