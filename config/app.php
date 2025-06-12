@@ -19,12 +19,12 @@ define('UPLOAD_DIR', __DIR__ . '/../uploads/');
 define('LOG_DIR', __DIR__ . '/../logs/');
 
 // Create necessary directories
-if (!file_exists(UPLOAD_DIR)) {
-    mkdir(UPLOAD_DIR, 0755, true);
-}
-if (!file_exists(LOG_DIR)) {
-    mkdir(LOG_DIR, 0755, true);
-}
+// if (!file_exists(UPLOAD_DIR)) {
+//     mkdir(UPLOAD_DIR, 0755, true);
+// }
+// if (!file_exists(LOG_DIR)) {
+//     mkdir(LOG_DIR, 0755, true);
+// }
 
 /**
  * Application Helper Class
@@ -44,7 +44,7 @@ class App {
     public static function log($message, $level = 'INFO') {
         $timestamp = date('Y-m-d H:i:s');
         $logMessage = "[$timestamp] [$level] $message" . PHP_EOL;
-        file_put_contents(LOG_DIR . 'app.log', $logMessage, FILE_APPEND | LOCK_EX);
+        // file_put_contents(LOG_DIR . 'app.log', $logMessage, FILE_APPEND | LOCK_EX);
     }
     
     /**
