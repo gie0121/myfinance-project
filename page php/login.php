@@ -5,6 +5,8 @@ require_once 'config.php';
 header('Content-Type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    echo("test post");
+
     try {
         // Get and sanitize input
         $email = sanitizeInput($_POST["email"] ?? '');
@@ -17,9 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         
         // Check if user exists
-        $stmt = $pdo->prepare("SELECT id, username, email, password FROM users WHERE email = ?");
-        $stmt->execute([$email]);
-        $user = $stmt->fetch();
+        // $stmt = $pdo->prepare("SELECT id, username, email, password FROM users WHERE email = ?");
+        // $stmt->execute([$email]);
+        // $user = $stmt->fetch();
         
         if ($user && verifyPassword($password, $user['password'])) {
             // Login successful
