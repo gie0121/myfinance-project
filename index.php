@@ -46,7 +46,6 @@ $flashMessage = App::getFlashMessage();
           <a href="page php/logout.php" class="btn danger">🚪 Logout</a>
         <?php else: ?>
           <a href="pages/login.html" class="btn">🔐 Login</a>
-          <a href="page_php/register.php" class="btn secondary">📝 Register</a>
         <?php endif; ?>
       </div>
     </div>
