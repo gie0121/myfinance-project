@@ -2,11 +2,7 @@
 session_start();
 require_once 'config.php';
 
-header('Content-Type: application/json');
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    echo("test post");
-
     try {
         // Get and sanitize input
         $email = sanitizeInput($_POST["email"] ?? '');
@@ -17,25 +13,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo json_encode(['status' => 'error', 'message' => 'Email and password are required']);
             exit;
         }
-        
+
         // Check if user exists
-        // $stmt = $pdo->prepare("SELECT id, username, email, password FROM users WHERE email = ?");
-        // $stmt->execute([$email]);
-        // $user = $stmt->fetch();
-        
+        $stmt = $pdo->prepare("SELECT id, username, email, password FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch();
+
         if ($user && verifyPassword($password, $user['password'])) {
             // Login successful
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['email'] = $user['email'];
             
-            echo json_encode(['status' => 'success', 'message' => 'Login successful']);
-            chdir('../pages/myfinance.html')
- 
+            // Redirect to myfinance.html
+            header("Location: ../pages/myfinance.html");
+            exit;
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Invalid email or password']);
         }
-        
+
     } catch (Exception $e) {
         echo json_encode(['status' => 'error', 'message' => 'Database error occurred']);
     }
