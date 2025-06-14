@@ -96,21 +96,46 @@
       updateTable();
 
       form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const amount = document.getElementById("amount").value;
-        const category = document.getElementById("category").value;
-        const date = document.getElementById("date").value;
-        const note = document.getElementById("description").value;
-        if (!amount || !category || !date) {
-          alert("Please fill all required fields.");
-          return;
-        }
+  e.preventDefault();
+  const amount = document.getElementById("amount").value;
+  const category = document.getElementById("category").value;
+  const date = document.getElementById("date").value;
+  const description = document.getElementById("description").value;
 
-        records.push({ amount, category, date, note });
-        localStorage.setItem(storageKey, JSON.stringify(records));
-        updateTable();
-        form.reset();
-      });
+  if (!amount || !category || !date) {
+    alert("請填寫所有必要欄位");
+    return;
+  }
+
+  fetch("../php/save_transaction.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({
+      amount,
+      category,
+      date,
+      description,
+      type: "expense"
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "success") {
+      alert("✅ 已成功新增交易");
+      form.reset();
+      // 可以選擇：重新載入資料來更新表格（下一步會教你 get_transactions.php）
+    } else {
+      alert("❌ 新增失敗：" + data.message);
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert("❌ 伺服器錯誤，請稍後再試");
+  });
+});
+
     });
 
     function logoutUser() {
