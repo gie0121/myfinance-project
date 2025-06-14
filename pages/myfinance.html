@@ -97,11 +97,10 @@
 
       form.addEventListener("submit", (e) => {
         e.preventDefault();
-        const amount = form.amount.value;
-        const category = form.category.value;
-        const date = form.date.value;
-        const note = form.description.value;
-
+        const amount = document.getElementById("amount").value;
+        const category = document.getElementById("category").value;
+        const date = document.getElementById("date").value;
+        const note = document.getElementById("description").value;
         if (!amount || !category || !date) {
           alert("Please fill all required fields.");
           return;
