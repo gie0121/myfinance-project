@@ -1,17 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Monthly Summary</title>
-  <link rel="stylesheet" href="../css/style.css">
-  <script src="../js/summary_search.js"></script>
+  <title>📅 Monthly Summary</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #fff0f6;
+      text-align: center;
+      padding: 20px;
+    }
+    canvas {
+      max-width: 600px;
+      margin: auto;
+    }
+  </style>
 </head>
-<body onload="updateMonthlySummary()">
-  <h2>📅 Monthly Expense Summary</h2>
-  <table>
-    <thead><tr><th>Month</th><th>Total Expenses</th></tr></thead>
-    <tbody id="monthly-summary-body"></tbody>
-  </table>
-  <br><a href="myfinance.html">← Back</a>
+<body>
+  <h1>📊 Monthly Summary</h1>
+  <canvas id="monthlyChart" width="600" height="400"></canvas>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentUser = localStorage.getItem("currentUser");
+      const storageKey = `records_${currentUser}`;
+      const records = JSON.parse(localStorage.getItem(storageKey) || "[]");
+
+      // 統計每月總額
+      const monthlyTotals = {};
+
+      records.forEach(({ amount, date }) => {
+        const month = date.slice(0, 7); // 取出 "YYYY-MM"
+        monthlyTotals[month] = (monthlyTotals[month] || 0) + parseFloat(amount);
+      });
+
+      const labels = Object.keys(monthlyTotals).sort();
+      const data = labels.map(month => monthlyTotals[month]);
+
+      new Chart(document.getElementById("monthlyChart"), {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Monthly Expenses',
+            data: data,
+            backgroundColor: '#ffb3c6'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+  </script>
 </body>
 </html>
