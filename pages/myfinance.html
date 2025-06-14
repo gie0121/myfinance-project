@@ -1,115 +1,126 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<title>MyFinance Tracker</title>
-<link href="../css/style.css" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="utf-8"/>
+  <title>MyFinance Tracker</title>
+  <link href="../css/style.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body><div class="topbar"><div class="username">👋 Hello, <span id="usernameDisplay"></span></div><!-- <button class="logout" onclick="logoutUser()">🚪 Logout</button> --></div>
+<body>
+  <div class="topbar">
+    <div class="username">👋 Hello, <span id="usernameDisplay"></span></div>
+  </div>
 
+  <div id="nav-buttons" style="margin-top: 20px; text-align: center;">
+    <a href="monthly_summary.html" class="nav-btn pink">📅 Monthly Summary</a>
+    <a href="keyword_search.html" class="nav-btn blue">🔍 Search Records</a>
+    <a href="#" onclick="logoutUser()" class="nav-btn red">🚪 Logout</a>
+  </div>
 
-<div id="nav-buttons" style="margin-top: 20px; text-align: center;">
-  <a href="monthly_summary.html" class="nav-btn pink">📅 Monthly Summary</a>
-  <a href="keyword_search.html" class="nav-btn blue">🔍 Search Records</a>
-  <a href="#" onclick="logoutUser()" class="nav-btn red">🚪 Logout</a>
-</div>
-
-
-
-<div class="container">
-<h1>🍥 MyFinance - Cute Tracker</h1>
-<form class="card" id="form">
-<label>💰 Amount: <input id="amount" required="" type="number"/></label>
-<label>🍱 Category:
+  <div class="container">
+    <h1>🍥 MyFinance - Cute Tracker</h1>
+    <form class="card" id="form">
+      <label>💰 Amount: <input id="amount" type="number" required></label>
+      <label>🍱 Category:
         <select id="category">
-<option value="Food">Food</option>
-<option value="Transport">Transport</option>
-<option value="Entertainment">Entertainment</option>
-</select>
-</label>
-<label>📅 Date: <input id="date" required="" type="date"/></label>
-<label>📝 Description: <input id="description" type="text"/></label>
-<button type="submit">➕ Add Transaction</button>
-</form>
-<div class="card" id="summary">
-<h2>Total: $<span id="total">0</span> 💸</h2>
-<canvas height="200" id="chart" width="400"></canvas>
-</div>
-<table id="transactions">
-<thead>
-<tr><th>Amount</th><th>Category</th><th>Date</th><th>Description</th></tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
-<script src="../js/script.js"></script>
-<script src="../js/random_background.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const currentUser = localStorage.getItem("currentUser");
-   
+          <option value="Food">Food</option>
+          <option value="Transport">Transport</option>
+          <option value="Entertainment">Entertainment</option>
+        </select>
+      </label>
+      <label>📅 Date: <input id="date" type="date" required></label>
+      <label>📝 Description: <input id="description" type="text"></label>
+      <button type="submit">➕ Add Transaction</button>
+    </form>
 
-  document.getElementById("usernameDisplay").innerText = currentUser;
+    <div class="card" id="summary">
+      <h2>Total: $<span id="total">0</span> 💸</h2>
+      <canvas id="chart" width="400" height="200"></canvas>
+    </div>
 
-  const storageKey = `records_${currentUser}`;
-  const form = document.querySelector("form");
-  const tbody = document.querySelector("tbody");
-  const totalSpan = document.getElementById("total");
-  const chartCanvas = document.getElementById("chart").getContext("2d");
+    <table id="transactions">
+      <thead>
+        <tr>
+          <th>Date</th><th>Category</th><th>Amount</th><th>Description</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
-  let records = JSON.parse(localStorage.getItem(storageKey) || "[]");
+  <script src="../js/script.js"></script>
+  <script src="../js/random_background.js"></script>
 
-  function updateTable() {
-    tbody.innerHTML = "";
-    let total = 0;
-    let categorySum = {};
-    records.forEach(({ amount, category, date, note }, index) => {
-      total += parseFloat(amount);
-      categorySum[category] = (categorySum[category] || 0) + parseFloat(amount);
-      tbody.innerHTML += `<tr><td>${date}</td><td>${category}</td><td>${amount}</td><td>${note}</td></tr>`;
-    });
-    totalSpan.innerText = total.toFixed(2);
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentUser = localStorage.getItem("currentUser");
+      document.getElementById("usernameDisplay").innerText = currentUser;
 
-    new Chart(chartCanvas, {
-      type: "pie",
-      data: {
-        labels: Object.keys(categorySum),
-        datasets: [{
-          data: Object.values(categorySum),
-          backgroundColor: ["#ffb3c6", "#ffe5b4", "#b5ead7", "#caffbf", "#a0c4ff"]
-        }]
+      const storageKey = `records_${currentUser}`;
+      const form = document.querySelector("form");
+      const tbody = document.querySelector("tbody");
+      const totalSpan = document.getElementById("total");
+      const chartCanvas = document.getElementById("chart").getContext("2d");
+
+      let records = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      let chartInstance = null;
+
+      function updateTable() {
+        tbody.innerHTML = "";
+        let total = 0;
+        let categorySum = {};
+
+        records.forEach(({ amount, category, date, note }) => {
+          total += parseFloat(amount);
+          categorySum[category] = (categorySum[category] || 0) + parseFloat(amount);
+          tbody.innerHTML += `<tr><td>${date}</td><td>${category}</td><td>${amount}</td><td>${note}</td></tr>`;
+        });
+
+        totalSpan.innerText = total.toFixed(2);
+
+        if (chartInstance) {
+          chartInstance.destroy();
+        }
+        chartInstance = new Chart(chartCanvas, {
+          type: "pie",
+          data: {
+            labels: Object.keys(categorySum),
+            datasets: [{
+              data: Object.values(categorySum),
+              backgroundColor: ["#ffb3c6", "#ffe5b4", "#b5ead7", "#caffbf", "#a0c4ff"]
+            }]
+          }
+        });
       }
+
+      updateTable();
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const amount = form.amount.value;
+        const category = form.category.value;
+        const date = form.date.value;
+        const note = form.description.value;
+
+        if (!amount || !category || !date) {
+          alert("Please fill all required fields.");
+          return;
+        }
+
+        records.push({ amount, category, date, note });
+        localStorage.setItem(storageKey, JSON.stringify(records));
+        updateTable();
+        form.reset();
+      });
     });
-  }
 
-  updateTable();
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const amount = form.amount.value;
-    const category = form.category.value;
-    const date = form.date.value;
-    const note = form.description.value;
-    if (!amount || !category || !date) return alert("Please fill all required fields.");
-
-    records.push({ amount, category, date, note });
-    localStorage.setItem(storageKey, JSON.stringify(records));
-    updateTable();
-    form.reset();
-  });
-});
-</script>
-
-<script>
-function logoutUser() {
-  localStorage.removeItem("currentUser");
-  alert("You have been logged out.");
-  setTimeout(() => {
-    window.location.href = "login.html";
-  }, 500);
-}
-</script>
+    function logoutUser() {
+      localStorage.removeItem("currentUser");
+      alert("You have been logged out.");
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 500);
+    }
+  </script>
 </body>
 </html>
