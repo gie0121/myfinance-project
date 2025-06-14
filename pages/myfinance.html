@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const amount = form.amount.value;
     const category = form.category.value;
     const date = form.date.value;
-    const note = form.note.value;
+    const note = form.description.value;
     if (!amount || !category || !date) return alert("Please fill all required fields.");
 
     records.push({ amount, category, date, note });
